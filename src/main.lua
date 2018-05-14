@@ -11,6 +11,6 @@ local flag = 0;
 --cqsj:animalSacrifice();
 --cqsj:changlines();
 --cqsj:killSmallBoss();
-cqsj:findBoss();
+--cqsj:findBoss();
 --cqsj:checkMap();
 --cqsj.gamehelper:stopMove();
