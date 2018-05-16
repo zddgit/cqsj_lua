@@ -72,15 +72,18 @@ function gamehelper:readNumber(rect_,diff_,whitelist_)
 	end
 	return num;
 end
-function gamehelper:click(fingerNum,x,y,isdelay)
+function gamehelper:click(fingerNum,x,y,isdelay,delayTime)
 	touchDown(1,x,y);	
 	mSleep(100);
 	touchUp(1,x,y);
 	if isdelay==nil then
 		isdelay = true;
 	end
+	if delayTime == nil then
+		delayTime = 1000;
+	end
 	if isdelay then
-		mSleep(800);
+		mSleep(delayTime);
 	end
 	
 end

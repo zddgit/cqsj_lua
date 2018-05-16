@@ -291,7 +291,9 @@ function cqsj:killSmallBoss()
 				self:autoBlaming();
 				flag = flag +1;
 			else
-				mSleep(1000); -- 等待拣去物品
+				if flag > 0 then
+					mSleep(1500); -- 等待拣去物品
+				end
 				self:colseAutoBlaming();
 				return flag;
 			end
