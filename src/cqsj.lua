@@ -223,6 +223,7 @@ function cqsj:changlines()
 	math.randomseed(time);
 	math.random(5);
 	local line = math.random(5);
+	sysLog("线路:"..line);
 	local x,y;
 	x, y = findColor({191, 85, 210, 94}, 
 		"0|0|0x3e190c,-8|0|0xefd6b1,-6|-2|0xdcc4a5,4|-2|0xd8c0a1,6|0|0xe3caa7",
@@ -279,7 +280,7 @@ function cqsj:killSmallBoss()
 			"0|0|0x2e1911,0|2|0x77533f,0|4|0x5f3d29,-4|4|0xac886e,6|4|0xc6ac96,3|-5|0xf5f0eb",
 			95, 0, 0, 0)
 		if x > -1 then
-			self.gamehelper:click(1,x,y);
+			self.gamehelper:click(1,x,y,true,500);
 			x, y = findColor({695,486,730,585}, 
 				"0|0|0xfdf1dd,0|3|0x653b32,-6|3|0x890705,5|3|0x8c110c,5|0|0xdcc0aa,-5|0|0xf8f3ed",
 				95, 0, 0, 0)
@@ -347,7 +348,7 @@ function cqsj:findBoss()
 		local point = findColors({823, 292, 841, 672}, 
 			"0|0|0x311e18,0|-28|0x100a07,-4|-28|0x110a07,-5|-28|0x110b08,-4|-26|0x40281e,-5|-25|0x3c251b,-6|-25|0x20140d",
 			95, 0, 0, 0)
-		sysLog("查到精英："..#point);
+		-- sysLog("查到精英："..#point);
 		if #point ~= 0 then
 			for var = 1, #point do
 				if var ~=1 then
@@ -378,13 +379,13 @@ function cqsj:stopMove()
 	touchDown(1, x, y)
 	mSleep(50)
 	touchMove(1, x, up_y)
-	mSleep(100)
+	mSleep(50)
 	touchUp(1, x, up_y)  
 	--下移
 	touchDown(1, x, y)
 	mSleep(50)
 	touchMove(1, x, down_y)
-	mSleep(100)
+	mSleep(50)
 	touchUp(1, x, up_y) 
 end
 function cqsj:colseBusyTag()
