@@ -356,14 +356,14 @@ function cqsj:findBoss()
 				end
 				local bossAddress = point[var];
 				local x,y = bossAddress.x,bossAddress.y;
-				self.gamehelper:click(1,x,y);
+				self.gamehelper:click(1,x,y,true,200);
 				self:closeTaskList();
 				local flag = 0;
 				while (self.gamehelper:isRun()) do
 					flag = self:killSmallBoss();
 					if flag > 0 then
 						self:checkMap();
-						self.gamehelper:click(1,x,y);
+						self.gamehelper:click(1,x,y,true,200);
 						self:closeTaskList();
 					end
 				end
