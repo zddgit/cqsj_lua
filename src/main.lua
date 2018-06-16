@@ -1,16 +1,4 @@
 cqsj = require("cqsj");
 cqsj:init();
 mSleep(3000);
---local flag = 0;
---cqsj:closeTaskTag();
---cqsj:openTaskTag();
---cqsj:clickTaskTag();
---cqsj:closeTaskList();
---cqsj:gold_shoumo();
---cqsj:zhaoling_task();
---cqsj:animalSacrifice();
---cqsj:changlines();
---cqsj:killSmallBoss();
-cqsj:findBoss();
---cqsj:checkMap();
---cqsj.gamehelper:stopMove();
+cqsj:Task_swy();

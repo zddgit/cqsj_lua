@@ -1,6 +1,7 @@
 cqsj={};
 cqsj.retry = 0;
 cqsj.task = 0;
+cqsj.swyOne = {{630,271},{692,359},{587,342},{474,390},{509,461},{482,530},{423,554},{360,529}};
 --传奇世界初始化
 function cqsj:init() 
 	init("0", 1)
@@ -275,16 +276,22 @@ end
 -- 精英怪
 function cqsj:killSmallBoss()
 	local flag = 0;
+	local tempY = 313;
 	while true do
+		--点击扫描要消灭的精英怪
 		local x, y = findColor({929, 531, 970, 571}, 
 			"0|0|0x2e1911,0|2|0x77533f,0|4|0x5f3d29,-4|4|0xac886e,6|4|0xc6ac96,3|-5|0xf5f0eb",
 			95, 0, 0, 0)
 		if x > -1 then
 			self.gamehelper:click(1,x,y,true,500);
-			x, y = findColor({695,486,730,585}, 
+			--获取范围内所有有用的精英怪 
+			x,y = findColor({695,tempY,732,623}, 
 				"0|0|0xfdf1dd,0|3|0x653b32,-6|3|0x890705,5|3|0x8c110c,5|0|0xdcc0aa,-5|0|0xf8f3ed",
 				95, 0, 0, 0)
-			if x > -1 then
+			local _x,_y = findColor({693, tempY, 789, 688}, 
+				"0|0|0xfdf1dd,34|0|0xf7f7f7,38|-2|0xe6e6e6,38|-6|0xd8d9d9,44|-2|0xf6f7f7,42|8|0xf3f3f3,47|8|0xd1d3d3,62|5|0xf8f8f8,57|-1|0xfbfbfb,66|-1|0xf2f2f2,62|-6|0xf9f9f9,62|9|0xdfe1e1",
+				85, 0, 0, 0)
+			if x > -1 and y~=_y then
 				self.gamehelper:click(1,x,y,false);
 				if self.gamehelper:isRun() then
 					self:stopMove();
@@ -292,8 +299,11 @@ function cqsj:killSmallBoss()
 				self:autoBlaming();
 				flag = flag +1;
 			else
+				if y==_y then
+					tempY = y
+				end
 				if flag > 0 then
-					mSleep(1500); -- 等待拣去物品
+					mSleep(3000); -- 等待拣去物品
 				end
 				self:colseAutoBlaming();
 				return flag;
@@ -400,6 +410,37 @@ function cqsj:colseBusyTag()
 	
 	--死亡提示
 	self:roleDead();
+end
+--任务神威狱一层
+function cqsj:Task_swy()
+	local length = #self.swyOne;
+	for i = 1,length,1 do
+		self:checkMap();
+		local point = self.swyOne[i];
+		local x,y = point[1],point[2];
+		self.gamehelper:click(1,x,y,true,200);
+		self:closeTaskList();
+		local flag = 0;
+		while (self.gamehelper:isRun()) do
+			flag = self:killSmallBoss();
+			if flag > 0 then
+				self:checkMap();
+				self.gamehelper:click(1,x,y,true,200);
+				self:closeTaskList();
+			end
+		end
+		if i == length then
+			while true do
+				if not self.gamehelper:isRun() then
+					self:changlines();
+					self:Task_swy();
+				else
+					mSleep(1000);
+				end
+			end
+		end
+		
+	end
 end
 
 
