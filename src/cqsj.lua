@@ -2,11 +2,15 @@ cqsj={};
 cqsj.retry = 0;
 cqsj.task = 0;
 cqsj.swyOne = {{630,271},{692,359},{587,342},{474,390},{509,461},{482,530},{423,554},{360,529}};
+cqsj.comeback={}; --回城石地址
+cqsj.sdzlOne = {{211,427},{425,333},{546,312},{483,340},{423,365},{279,441},{375,428},{442,397},{516,357},{620,341},{473,431},{412,520},{577,458},{726,383}};
+cqsj.line = 1;
 --传奇世界初始化
 function cqsj:init() 
 	init("0", 1)
 	self.gamehelper = require("GameHelper");
 	setScreenScale(gamehelper.width,gamehelper.heigth);
+	
 end
 
 --关闭任务栏
@@ -77,12 +81,11 @@ function cqsj:zhaoling_task()
 					"0|0|0xd1a678,-4|-6|0xeec48e,8|-3|0xf6cd95,6|11|0xf2c891,13|0|0xe8bf8a,12|-10|0xe2b683",
 					95, 0, 0, 0)
 				if x > -1 then
-					toast("完成任务");
 					self.gamehelper:click(1,x,y);
 					self:closeTaskList();
 					self:zhaoling_task();
 				else
-					toast("未找到完成任务");
+					toast("诏令结束");
 					self:closeTaskList();
 				end
 				
@@ -126,14 +129,19 @@ function cqsj:gold_shoumo()
 				end
 			else
 				toast("狩魔结束");
+				self:closeTaskList();
 			end
+		else
+			toast("狩魔结束");
+			self:closeTaskList();
 		end
 	else
 		self.retry = self.retry +1;
 		if self.retry < 3 then
-			self:zhaoling_task();
+			self:gold_shoumo();
 		else
 			toast("狩魔失败");
+			self:closeTaskList();
 		end
 	end
 end
@@ -219,11 +227,17 @@ function cqsj:animalSacrifice()
 		sysLog("未找到");
 	end
 end
-function cqsj:changlines()
-	local time = os.time();
-	math.randomseed(time);
-	math.random(5);
-	local line = math.random(5);
+function cqsj:changlines(line)
+	if line==nil then
+		local time = os.time();
+		math.randomseed(time);
+		math.random(5);
+		local line = math.random(5);
+		while self.line == line do
+			line = math.random(5);
+		end
+	end
+	self.line = line;
 	sysLog("线路:"..line);
 	local x,y;
 	x, y = findColor({191, 85, 210, 94}, 
@@ -275,9 +289,11 @@ function cqsj:changlines()
 end
 -- 精英怪
 function cqsj:killSmallBoss()
+	-- flag >0 代表要击杀的目标解决完毕
 	local flag = 0;
 	local tempY = 313;
 	while true do
+		cqsj:colseBusyTag();
 		--点击扫描要消灭的精英怪
 		local x, y = findColor({929, 531, 970, 571}, 
 			"0|0|0x2e1911,0|2|0x77533f,0|4|0x5f3d29,-4|4|0xac886e,6|4|0xc6ac96,3|-5|0xf5f0eb",
@@ -288,9 +304,11 @@ function cqsj:killSmallBoss()
 			x,y = findColor({695,tempY,732,623}, 
 				"0|0|0xfdf1dd,0|3|0x653b32,-6|3|0x890705,5|3|0x8c110c,5|0|0xdcc0aa,-5|0|0xf8f3ed",
 				95, 0, 0, 0)
+			--不被期望的精英怪
 			local _x,_y = findColor({693, tempY, 789, 688}, 
 				"0|0|0xfdf1dd,34|0|0xf7f7f7,38|-2|0xe6e6e6,38|-6|0xd8d9d9,44|-2|0xf6f7f7,42|8|0xf3f3f3,47|8|0xd1d3d3,62|5|0xf8f8f8,57|-1|0xfbfbfb,66|-1|0xf2f2f2,62|-6|0xf9f9f9,62|9|0xdfe1e1",
 				85, 0, 0, 0)
+			
 			if x > -1 and y~=_y then
 				self.gamehelper:click(1,x,y,false);
 				if self.gamehelper:isRun() then
@@ -410,13 +428,57 @@ function cqsj:colseBusyTag()
 	
 	--死亡提示
 	self:roleDead();
+	
+	--关闭神威狱瓶子提示
+	x, y = findColor({1150, 201, 1183, 234}, 
+		"0|0|0xdeb673,-3|-3|0xf5eba1,2|-3|0xa08c74,4|4|0xe69856,-4|4|0xd19153",
+		90, 0, 0, 0)
+	if x > -1 then
+		self.gamehelper:click(1,x,y);
+	end
 end
---任务神威狱一层
-function cqsj:Task_swy()
-	local length = #self.swyOne;
+--初始化神威狱
+function cqsj:initSWY()
+	--执行回城石
+	local x, y = findColor({828, 342, 1279, 706}, 
+		"0|0|0x6cd6d6,-5|0|0x94dada,-4|3|0x314251,-2|5|0x3bd2b1,2|4|0x4feec2",
+		85, 0, 0, 0)
+	if x > -1 then
+		self.comeback[1],self.comeback[2]= x,y;
+		self.gamehelper:click(1,x,y,3000);
+	end	
+	--点击老兵
+	x, y = findColor({393, 188, 715, 416}, 
+		"0|0|0xebd26a,-3|0|0xcfa554,8|2|0xf8e674,8|-4|0xe8d169,-19|3|0xfbea76,23|0|0xf7e473,23|4|0xf1dc6f,9|8|0xe9d56b",
+		85, 0, 0, 0)
+	if x > -1 then
+		sysLog("老兵找到");
+		self.gamehelper:click(1,x,y,3000);
+		--点击前往神威狱
+		self.gamehelper:click(1,760,457,3000);
+		--点击前往神威狱传送官
+		x, y = findColor({335, 84, 591, 541}, 
+			"0|0|0xeed66c,-19|0|0xdfbf61,-24|-2|0xf8e674,11|-2|0xe5c966,15|-6|0xf0dc6f,4|7|0xfeef78",
+			85, 0, 0, 0)
+		if x > -1 then
+			sysLog("神威狱传送官找到");
+			self.gamehelper:click(1,x,y,3000);
+			--点击前往神威狱一层
+			self.gamehelper:click(1,760,459,3000);
+		end
+		
+	end
+	
+end
+--刷材料任务
+function cqsj:task(taskPoints)
+	local length = #taskPoints;
 	for i = 1,length,1 do
+		if i==2 then
+			self:changlines();
+		end
 		self:checkMap();
-		local point = self.swyOne[i];
+		local point = taskPoints[i];
 		local x,y = point[1],point[2];
 		self.gamehelper:click(1,x,y,true,200);
 		self:closeTaskList();
@@ -433,7 +495,7 @@ function cqsj:Task_swy()
 			while true do
 				if not self.gamehelper:isRun() then
 					self:changlines();
-					self:Task_swy();
+					self:task(taskPoints);
 				else
 					mSleep(1000);
 				end
@@ -442,6 +504,34 @@ function cqsj:Task_swy()
 		
 	end
 end
-
+function cqsj:quick_task(taskPoints)
+	local length = #taskPoints;
+	for i = 1,length,1 do
+		--打开地图点击要去的位置，并关闭地图
+		self:checkMap();
+		local point = taskPoints[i];
+		local x,y = point[1],point[2];
+		self.gamehelper:click(1,x,y,true,200);
+		self:closeTaskList();
+		
+		--在移动到具体位置的过程中搜寻要击杀的目标
+		local flag = 0;
+		while (self.gamehelper:isRun()) do
+			flag = self:killSmallBoss();
+			if flag > 0 then
+				self:checkMap();
+				self.gamehelper:click(1,x,y,true,200);
+				self:closeTaskList();
+			end
+		end
+		--到达指定位置，切换线路,击杀精英
+		for line = 1,5,1 do 
+			self:changlines(line);
+			self:killSmallBoss();
+		end
+		
+	end
+	
+end
 
 return cqsj;
