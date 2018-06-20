@@ -48,9 +48,14 @@ function gamehelper:isRun()
 	end
 end
 -- 识别指定区域屏幕上的非中文字符
-function gamehelper.readScreen(rect_,diff_,whitelist_)
+function gamehelper.readScreen(rect_,diff_,whitelist_,path,lang)
 	local colorTbl = binarizeImage({ rect = rect_, diff = diff_}); -- 二值化 指定区域图片
-	local ocr, msg = createOCR({ type = "tesseract", mode = 2 });
+	local parms = {type = "tesseract", mode = 3};
+	if path ~= nil and lang ~=nil then
+	   parms.path = path;
+	   parms.lang = lang;
+	end
+	local ocr, msg = createOCR(parms);
 	local code, text = ocr:getText({ data = colorTbl, psm = 6, diff = diff_ ,whitelist = whitelist_});
 	ocr:release()
 	return code,text;

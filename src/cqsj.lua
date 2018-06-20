@@ -506,7 +506,9 @@ function cqsj:task(taskPoints)
 end
 function cqsj:quick_task(taskPoints)
 	local length = #taskPoints;
-	for i = 1,length,1 do
+	local i = 1;
+	while true do
+		
 		--打开地图点击要去的位置，并关闭地图
 		self:checkMap();
 		local point = taskPoints[i];
@@ -531,9 +533,10 @@ function cqsj:quick_task(taskPoints)
 		end
 		--当循环到最后一次的时候，初始化i
 		if i==length then
-			i = 0
+			sysLog("初始化i=0");
+			i = 0;
 		end
-		
+		i = i + 1;
 	end
 	
 end
