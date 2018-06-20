@@ -529,6 +529,10 @@ function cqsj:quick_task(taskPoints)
 			self:changlines(line);
 			self:killSmallBoss();
 		end
+		--当循环到最后一次的时候，初始化i
+		if i==length then
+			i = 0
+		end
 		
 	end
 	
