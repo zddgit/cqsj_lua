@@ -11,7 +11,7 @@ if string.find (text, "神威狱") ~= nil and string.find (text, "一")  then
 	cqsj:quick_task(cqsj.swyOne);
 end
 if string.find (text, "神威狱") ~= nil and string.find (text, "二")  then
-	cqsj:quick_task(cqsj.swyTwo);
+	cqsj:quick_task(cqsj.swyTwo,3);
 end
 if string.find (text, "高原") ~= nil then
 	cqsj:quick_task(cqsj.msgy);

@@ -302,38 +302,49 @@ function cqsj:killSmallBoss()
 	local tempY = 313;
 	while true do
 		cqsj:colseBusyTag();
-		--点击扫描要消灭的精英怪
+		
+		--点击扫描要消灭的精英怪和仇人列表
 		local x, y = findColor({929, 531, 970, 571}, 
 			"0|0|0x2e1911,0|2|0x77533f,0|4|0x5f3d29,-4|4|0xac886e,6|4|0xc6ac96,3|-5|0xf5f0eb",
 			95, 0, 0, 0)
 		if x > -1 then
 			self.gamehelper:click(1,x,y,true,500);
-			--获取范围内所有有用的精英怪 
-			x,y = findColor({695,tempY,732,623}, 
-				"0|0|0xfdf1dd,0|3|0x653b32,-6|3|0x890705,5|3|0x8c110c,5|0|0xdcc0aa,-5|0|0xf8f3ed",
-				95, 0, 0, 0)
-			--不被期望的精英怪
-			local _x,_y = findColor({693, tempY, 789, 688}, 
-				"0|0|0xfdf1dd,34|0|0xf7f7f7,38|-2|0xe6e6e6,38|-6|0xd8d9d9,44|-2|0xf6f7f7,42|8|0xf3f3f3,47|8|0xd1d3d3,62|5|0xf8f8f8,57|-1|0xfbfbfb,66|-1|0xf2f2f2,62|-6|0xf9f9f9,62|9|0xdfe1e1",
-				85, 0, 0, 0)
-			
-			if x > -1 and y~=_y then
-				self.gamehelper:click(1,x,y,false);
-				if self.gamehelper:isRun() then
-					self:stopMove();
-				end
-				self:autoBlaming();
-				flag = flag +1;
+			--点击扫描仇人
+			x, y = findColor({695, 346, 735, 640}, 
+				"0|0|0xca8148,-4|0|0xeb3a12,4|0|0xe52e12,13|11|0xdf3511,13|12|0xbc2e15,11|10|0xdf3f14,15|10|0xde4014",
+				90, 0, 0, 0)
+			if x > -1 then
+				sysLog("查找到仇人");
+				self.gamehelper:click(1,x,y);
 			else
-				if y==_y then
-					tempY = y
+				--获取范围内所有有用的精英怪 
+				x,y = findColor({695,tempY,732,623}, 
+					"0|0|0xfdf1dd,0|3|0x653b32,-6|3|0x890705,5|3|0x8c110c,5|0|0xdcc0aa,-5|0|0xf8f3ed",
+					95, 0, 0, 0)
+				--不被期望的精英怪
+				local _x,_y = findColor({693, tempY, 789, 688}, 
+					"0|0|0xfdf1dd,34|0|0xf7f7f7,38|-2|0xe6e6e6,38|-6|0xd8d9d9,44|-2|0xf6f7f7,42|8|0xf3f3f3,47|8|0xd1d3d3,62|5|0xf8f8f8,57|-1|0xfbfbfb,66|-1|0xf2f2f2,62|-6|0xf9f9f9,62|9|0xdfe1e1",
+					85, 0, 0, 0)
+				if x > -1 and y~=_y then
+					sysLog("查找到精英")
+					self.gamehelper:click(1,x,y,false);
+					if self.gamehelper:isRun() then
+						self:stopMove();
+					end
+					self:autoBlaming();
+					flag = flag +1;
+				else
+					if y==_y then
+						tempY = y
+					end
+					if flag > 0 then
+						mSleep(3000); -- 等待拣去物品
+					end
+					self:colseAutoBlaming();
+					return flag;
 				end
-				if flag > 0 then
-					mSleep(3000); -- 等待拣去物品
-				end
-				self:colseAutoBlaming();
-				return flag;
 			end
+			
 			
 		end
 		
@@ -512,7 +523,7 @@ function cqsj:task(taskPoints)
 		
 	end
 end
-function cqsj:quick_task(taskPoints)
+function cqsj:quick_task(taskPoints,lines)
 	local length = #taskPoints;
 	local i = 1;
 	while true do
@@ -535,7 +546,10 @@ function cqsj:quick_task(taskPoints)
 			end
 		end
 		--到达指定位置，切换线路,击杀精英
-		for line = 1,5,1 do 
+		if lines == nil then
+			lines = 5;
+		end
+		for line = 1,lines,1 do 
 			self:changlines(line);
 			self:killSmallBoss();
 		end
