@@ -1,21 +1,34 @@
 cqsj={};
 cqsj.retry = 0;
 cqsj.task = 0;
---神威狱地址
-cqsj.swyOne = {{630,271},{692,359},{587,342},{474,390},{509,461},{482,530},{423,554},{360,529}};
-cqsj.swyTwo = {{636,257},{646,307},{656,386},{529,286},{439,395},{240,438},{268,389},{318,566},{558,547}};
+--神威狱一层
+cqsj.swyOne = {{631,271},{683,353},{593,331},{489,287},{343,311},{465,388},{502,454},{552,500},{632,459},{593,541},{473,533},{378,534},{320,446}};
+--神威狱二层
+cqsj.swyTwo = {{612,245},{645,308},{508,274},{529,332},{458,365},{503,409},{348,390},{237,436},{416,451},{383,495},{354,547},{309,570},{397,571},{455,597},{528,549},{578,541}};
 cqsj.comeback={}; --回城石地址
 --圣殿走廊
 cqsj.sdzl = {{211,427},{425,333},{546,312},{483,340},{423,365},{279,441},{375,428},{442,397},{516,357},{620,341},{473,431},{412,520},{577,458},{726,383}};
 --猛兽高原
 cqsj.msgy = {{297,527},{435,547},{560,494},{629,414},{673,348},{591,319},{497,271},{398,275},{312,338},{293,420},{438,459},{467,348}};
+--圣殿魔宫
 cqsj.sdmg = {{240,458},{329,415},{399,376},{454,342},{519,308},{578,327},{518,362},{456,409},{402,440},{345,476},{384,529},{451,497},{517,463},{574,435},{624,412},{689,386}}
+--太清上清秘境
 cqsj.mj= {{446,303},{383,337},{310,370},{251,405},{373,456},{443,421},{518,390},{577,364},{675,421},{588,465},{525,495},{483,521}}
+--全民宝地五层
 cqsj.bd_five = {{254,422},{269,352},{309,305},{398,307},{470,316},{417,356},{366,395},{336,429},{533,535},{616,496},{684,510},{685,428},{714,366},{620,365},{555,420},{507,471}}
+--定远废墟一层
+cqsj.dyfx_one = {{259,485},{327,509},{474,588},{562,537},{560,483},{644,540},{667,482},{684,414},{718,363},{642,287},{594,319},{516,372},{412,283},{339,316},{291,351},{375,359},{419,415}}
+--沉船二层
+cqsj.cc_two = {{715,487},{662,462},{611,436},{543,475},{497,505},{385,455},{460,406},{530,368},{589,329},{446,352},{498,292},{413,312},{371,338},{381,412},{301,414},{239,409},{247,476},{314,495}}
+--当前所在线路
 cqsj.line = 1;
+cqsj.linePoint = {{365,226},{495,226},{365,290},{495,290},{365,354}};
+--当前执行的任务
+cqsj.nowTask = nil;
 --传奇世界初始化
 function cqsj:init() 
 	init("0", 1)
+	cqsj.nowTask = -1;
 	self.gamehelper = require("GameHelper");
 	setScreenScale(gamehelper.width,gamehelper.heigth);
 	
@@ -247,49 +260,14 @@ function cqsj:changlines(line)
 	end
 	self.line = line;
 	sysLog("线路:"..line);
-	local x,y;
-	x, y = findColor({191, 85, 210, 94}, 
+	local x, y = findColor({191, 85, 210, 94}, 
 		"0|0|0x3e190c,-8|0|0xefd6b1,-6|-2|0xdcc4a5,4|-2|0xd8c0a1,6|0|0xe3caa7",
 		95, 0, 0, 0)
 	if x > -1 then
 		self.gamehelper:click(1,x,y);
-		mSleep(1000);
-		if line == 1 then
-			x, y = findColor({317, 190, 561, 526}, 
-				"0|0|0x38ca40,9|0|0xe7bd88,8|-6|0xefc58e,5|-4|0xe7bb87,9|9|0xe5bc88",
-				95, 0, 0, 0)
-			if x > -1 then
-				self.gamehelper:click(1,x,y);
-			end
-		elseif line == 2 then
-			x, y = findColor({317, 190, 561, 526}, 
-				"0|0|0x35c640,12|0|0xebc18c,5|-5|0xdeb07d,8|-7|0xe4b682,8|9|0xe9c08b,5|9|0xf6cd96",
-				95, 0, 0, 0)
-			if x > -1 then
-				self.gamehelper:click(1,x,y);
-			end
-		elseif line == 3 then
-			x, y = findColor({317, 190, 561, 526}, 
-				"0|0|0x31c340,8|-7|0xe3b581,8|1|0xe8be89,8|9|0xc1976a,4|7|0x633720,5|-4|0x8c512e",
-				95, 0, 0, 0)
-			if x > -1 then
-				self.gamehelper:click(1,x,y);
-			end
-		elseif line == 4 then
-			x, y = findColor({317, 190, 561, 526}, 
-				"0|0|0x35c13d,6|0|0xd4a978,4|4|0xf3ca92,6|-2|0x864b2a,12|8|0xebc18c,7|-4|0x804121",
-				95, 0, 0, 0)
-			if x > -1 then
-				self.gamehelper:click(1,x,y);
-			end
-		else 
-			x, y = findColor({317, 190, 561, 526}, 
-				"0|0|0x31c542,6|0|0xf0c690,14|3|0xe0b582,11|3|0x734125,13|0|0x7e4a2a,12|-6|0xf1c690",
-				95, 0, 0, 0)
-			if x > -1 then
-				self.gamehelper:click(1,x,y);
-			end
-		end
+		local point = self.linePoint[line];
+		x, y = point[1],point[2];
+		self.gamehelper:click(1,x,y);
 		return true;
 	else
 		return false;
@@ -299,7 +277,7 @@ end
 function cqsj:killSmallBoss()
 	-- flag >0 代表要击杀的目标解决完毕
 	local flag = 0;
-	local tempY = 313;
+	local tempY = 250;
 	while true do
 		cqsj:colseBusyTag();
 		
@@ -314,40 +292,53 @@ function cqsj:killSmallBoss()
 				"0|0|0xca8148,-4|0|0xeb3a12,4|0|0xe52e12,13|11|0xdf3511,13|12|0xbc2e15,11|10|0xdf3f14,15|10|0xde4014",
 				90, 0, 0, 0)
 			if x > -1 then
-				sysLog("查找到仇人");
-				self.gamehelper:click(1,x,y);
+				self.gamehelper:click(1,x,y,false);
 			else
 				--获取范围内所有有用的精英怪 
 				x,y = findColor({695,tempY,732,623}, 
 					"0|0|0xfdf1dd,0|3|0x653b32,-6|3|0x890705,5|3|0x8c110c,5|0|0xdcc0aa,-5|0|0xf8f3ed",
-					95, 0, 0, 0)
-				--不被期望的精英怪
+					80, 0, 0, 0)
+				--不被期望的精英怪(狱卒)
 				local _x,_y = findColor({693, tempY, 789, 688}, 
 					"0|0|0xfdf1dd,34|0|0xf7f7f7,38|-2|0xe6e6e6,38|-6|0xd8d9d9,44|-2|0xf6f7f7,42|8|0xf3f3f3,47|8|0xd1d3d3,62|5|0xf8f8f8,57|-1|0xfbfbfb,66|-1|0xf2f2f2,62|-6|0xf9f9f9,62|9|0xdfe1e1",
-					85, 0, 0, 0)
+					80, 0, 0, 0)
 				if x > -1 and y~=_y then
-					sysLog("查找到精英")
 					self.gamehelper:click(1,x,y,false);
 					if self.gamehelper:isRun() then
 						self:stopMove();
 					end
-					self:autoBlaming();
+					--判断不是稀有精英
+					local x1, y1 = findColor({454, 42, 487, 59}, 
+						"0|0|0x000000,-4|0|0x18af01,4|0|0x1bc603,9|0|0x17b100,-9|0|0x17a402",
+						95, 0, 0, 0)
+					if x1 > -1 and self.nowTask ~=0 then
+--						self:colseAutoBlaming();
+						return 1;
+					else
+						self:autoBlaming();
+					end
 					flag = flag +1;
 				else
 					if y==_y then
 						tempY = y
 					end
 					if flag > 0 then
-						mSleep(3000); -- 等待拣去物品
+						local x, y = findColor({1219, 347, 1252, 382}, 
+							"0|0|0x998866,-13|0|0xd1c0af,0|-16|0x351e13,2|-16|0x4c2d2a,2|-18|0xfaf8e7",
+							95, 0, 0, 0)
+						if x > -1 then
+						    -- 如果发现处于自动战斗状态则等待3秒拣去物品
+							mSleep(3000);
+						end
 					end
-					self:colseAutoBlaming();
+--					self:colseAutoBlaming();
 					return flag;
 				end
 			end
 			
 			
 		end
-		
+		mSleep(50);
 	end
 	
 end
@@ -375,6 +366,7 @@ function cqsj:roleDead()
 		"0|0|0xedc28d,7|-3|0xeec48e,-23|0|0xd9ad7c,-18|5|0xe3ba87,-15|3|0x4f2416,9|6|0xe7be8a",
 		95, 0, 0, 0)
 	if x > -1 then
+		sysLog("死亡提示");
 		self.gamehelper:click(1,x,y);
 	end
 end
@@ -441,6 +433,7 @@ function cqsj:colseBusyTag()
 		"0|0|0xf6e18e,-7|7|0xd8884a,7|7|0xd58649,-8|-8|0xf8c65f,9|-9|0xfce25c",
 		95, 0, 0, 0)
 	if x > -1 then
+		sysLog("网络差提示");
 		self.gamehelper:click(1,x,y);
 	end
 	--比拼提示
@@ -453,7 +446,7 @@ function cqsj:colseBusyTag()
 		"0|0|0xdeb673,-3|-3|0xf5eba1,2|-3|0xa08c74,4|4|0xe69856,-4|4|0xd19153",
 		90, 0, 0, 0)
 	if x > -1 then
-		self.gamehelper:click(1,x,y);
+		self.gamehelper:click(1,x,y,false);
 	end
 end
 --初始化神威狱
@@ -489,40 +482,7 @@ function cqsj:initSWY()
 	end
 	
 end
---刷材料任务
-function cqsj:task(taskPoints)
-	local length = #taskPoints;
-	for i = 1,length,1 do
-		if i==2 then
-			self:changlines();
-		end
-		self:checkMap();
-		local point = taskPoints[i];
-		local x,y = point[1],point[2];
-		self.gamehelper:click(1,x,y,true,200);
-		self:closeTaskList();
-		local flag = 0;
-		while (self.gamehelper:isRun()) do
-			flag = self:killSmallBoss();
-			if flag > 0 then
-				self:checkMap();
-				self.gamehelper:click(1,x,y,true,200);
-				self:closeTaskList();
-			end
-		end
-		if i == length then
-			while true do
-				if not self.gamehelper:isRun() then
-					self:changlines();
-					self:task(taskPoints);
-				else
-					mSleep(1000);
-				end
-			end
-		end
-		
-	end
-end
+--根据坐标刷材料
 function cqsj:quick_task(taskPoints,lines)
 	local length = #taskPoints;
 	local i = 1;
